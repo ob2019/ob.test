@@ -15,6 +15,7 @@ class CreateBetsTable extends Migration
     {
         Schema::create('bets', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('player_id')->foreign('player_id')->references('id')->on('players');
             $table->decimal('stake_amount', 7, 2);
             $table->timestamps();
         });
