@@ -27,22 +27,22 @@ class BetRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'player_id.required' => 'Betslip structure mismatch',
-            'stake_amount.required' => 'Betslip structure mismatch',
-            'selections.required' => 'Betslip structure mismatch',
-            'selections.array' => 'Betslip structure mismatch',
-            'selections.*.id.required' => 'Betslip structure mismatch',
-            'selections.*.odds.required' => 'Betslip structure mismatch',
+            'player_id.required' => '1|Betslip structure mismatch',
+            'stake_amount.required' => '1|Betslip structure mismatch',
+            'selections.required' => '1|Betslip structure mismatch',
+            'selections.array' => '1|Betslip structure mismatch',
+            'selections.*.id.required' => '1|Betslip structure mismatch',
+            'selections.*.odds.required' => '1|Betslip structure mismatch',
 
-            'stake_amount.min' => 'Minimum stake amount is :min',
-            'stake_amount.max' => 'Maximum stake amount is :max',
+            'stake_amount.min' => '2|Minimum stake amount is :min',
+            'stake_amount.max' => '3|Maximum stake amount is :max',
 
-            'selections.min' => 'Minimum number of selections is :min',
-            'selections.max' => 'Maximum number of selections is :max',
+            'selections.min' => '4|Minimum number of selections is :min',
+            'selections.max' => '5|Maximum number of selections is :max',
 
-            'selections.*.id.distinct' => 'Duplicate selection found',
-            'selections.*.odds.min' => 'Minimum odds are :min',
-            'selections.*.odds.max' => 'Maximum odds are :max',
+            'selections.*.id.distinct' => '8|Duplicate selection found',
+            'selections.*.odds.min' => '6|Minimum odds are :min',
+            'selections.*.odds.max' => '7|Maximum odds are :max',
         ];
     }
 
@@ -88,18 +88,15 @@ class BetRequest extends FormRequest
             foreach ($errors as $k => $v) {
                 if (strpos($k, "selections.") === false) {
                     //if this is global error
-                    $globalErrors[] = [
-                        'code' => 1,
-                        'message' => $v[0],
-                    ];
+
+                    $globalErrors[] = $this->getErrorPayload($v[0]);
                 } else {
                     //if this is selection error
+
+                    //getting path to root of given selection array
                     $key = substr($k,0,strrpos($k,'.'));
 
-                    Arr::set($request, $key . ".errors", [
-                        'code' => 2,
-                        'message' => $v['0']
-                    ]);
+                    Arr::set($request, $key . ".errors", $this->getErrorPayload($v[0]));
                 }
             }
 
@@ -110,6 +107,32 @@ class BetRequest extends FormRequest
             response()->json($request, Response::HTTP_BAD_REQUEST)->send();
             exit;
         });
+    }
+
+    /**
+     * Extract error code and error message from custom error message of format [error code]|[error_message]
+     *
+     * @param string $error
+     * @return array
+     */
+    private function getErrorPayload(string $error): array
+    {
+        $results = [];
+        $data = explode("|", $error);
+
+        if (count($data) == 2) {
+            $results = [
+                'code' => $data[0],
+                'message' => $data[1],
+            ];
+        } else {
+            $results = [
+                'code' => 0,
+                'message' => $error
+            ];
+        }
+
+        return $results;
     }
 }
 
