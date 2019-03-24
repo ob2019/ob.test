@@ -59,7 +59,7 @@ class BetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'player_id' => 'required|integer|min:1|sufficient_balance|max_win_amount:20000',
+            'player_id' => 'required|integer|min:1|sufficient_balance|max_win_amount:20000|is_not_locked',
             'stake_amount' => 'required|numeric|min:0.3|max:10000',
             'selections' => 'required|array|min:1|max:20',
 

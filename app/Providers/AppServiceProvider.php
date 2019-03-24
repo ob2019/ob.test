@@ -53,9 +53,20 @@ class AppServiceProvider extends ServiceProvider
 
     public function addCustomValidators()
     {
+        $this->addIsNotLockedValidator();
+
         $this->addMaxWinAmountValidator();
 
         $this->addSufficientBalanceValidator();
+    }
+
+    private function addIsNotLockedValidator(): void
+    {
+        Validator::extend('is_not_locked', function ($attribute, $value, $parameters, $validator) {
+            $player = Player::find($this->request['player_id']);
+
+            return !$player->isLocked();
+        });
     }
 
     /**

@@ -1,0 +1,69 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Configuration for the sofa/model-locking package.
+|
+| @link https://github.com/jarektkaczyk/model-locking
+|--------------------------------------------------------------------------
+*/
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Default duration of the lock.
+    |--------------------------------------------------------------------------
+    */
+    'duration' => '31 seconds',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Whether to use authenticated user as author of the lock by default.
+    |--------------------------------------------------------------------------
+    */
+    'use_authenticated_user' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Duration of the shortened lock after unlock request have been submitted.
+    | By default unlock request does not reduce lcok duration, however you
+    | are free to change this behaviour by specifying new duration here.
+    |--------------------------------------------------------------------------
+    */
+    'request_shorten_duration' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Model used for the lock relation, referencing one, who locked model.
+    |--------------------------------------------------------------------------
+    */
+    'user_model' => 'App\User',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Do you want to use tokens or just check based on the user authorized?
+    |--------------------------------------------------------------------------
+    */
+    'use_tokens' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Channels for events broadcasting.
+    |--------------------------------------------------------------------------
+    */
+    'channels' => [
+        'locked' => [],
+        'request' => [],
+        'unlocked' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Names of the events that are passed on when broadcasting.
+    |--------------------------------------------------------------------------
+    */
+    'broadcast_as' => [
+        Sofa\ModelLocking\ModelLocked::class => null,
+        Sofa\ModelLocking\ModelUnlocked::class => null,
+    ],
+];

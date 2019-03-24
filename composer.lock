@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94d4bf9ac7f4a933030e46a346ee2917",
+    "content-hash": "b245b22e3b0c1a0c54d0a83ed28e8848",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1392,6 +1392,65 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
+        },
+        {
+            "name": "sofa/model-locking",
+            "version": "v5.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jarektkaczyk/model-locking.git",
+                "reference": "fc8e9407536230443d883760c19b1bcf1c5ea0bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jarektkaczyk/model-locking/zipball/fc8e9407536230443d883760c19b1bcf1c5ea0bf",
+                "reference": "fc8e9407536230443d883760c19b1bcf1c5ea0bf",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^5.5",
+                "illuminate/queue": "^5.5",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "kahlan/kahlan": "~2.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sofa\\ModelLocking\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sofa\\ModelLocking\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jarek Tkaczyk",
+                    "email": "jarek@softonsofa.com",
+                    "homepage": "https://softonsofa.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Pseudo pessimistic model locking with broadcasted events for Laravel Eloquent ORM.",
+            "keywords": [
+                "Active Record",
+                "eloquent",
+                "laravel",
+                "locking",
+                "model lock",
+                "orm",
+                "pessimistic lock"
+            ],
+            "time": "2019-03-15T07:18:01+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
