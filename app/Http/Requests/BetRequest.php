@@ -25,11 +25,34 @@ class BetRequest extends FormRequest
     {
         return [
             'player_id' => 'required|integer|min:1',
-            'stake_amount' => 'required|min:0.3|max:10000',
+            'stake_amount' => 'required|numeric|min:0.3|max:10000',
             'selections' => 'required|array|min:1|max:20',
 
             'selections.*.id' => 'required|distinct|integer|min:1',
-            'selections.*.odds' => 'required|min:1|max:10000',
+            'selections.*.odds' => 'required|numeric|min:1|max:10000',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'player_id.required' => 'Betslip structure mismatch',
+            'stake_amount.required' => 'Betslip structure mismatch',
+            'selections.required' => 'Betslip structure mismatch',
+            'selections.array' => 'Betslip structure mismatch',
+            'selections.*.id.required' => 'Betslip structure mismatch',
+            'selections.*.odds.required' => 'Betslip structure mismatch',
+
+            'stake_amount.min' => 'Minimum stake amount is :min',
+            'stake_amount.max' => 'Maximum stake amount is :max',
+
+            'selections.min' => 'Minimum number of selections is :min',
+            'selections.max' => 'Maximum number of selections is :max',
+
+            'selections.*.id.distinct' => 'Duplicate selection found',
+            'selections.*.odds.min' => 'Minimum odds are :min',
+            'selections.*.odds.max' => 'Maximum odds are :max',
         ];
     }
 }
+
