@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\BetRequest;
 
 class BetController extends Controller
 {
-    public function store(Request $request)
+    /**
+     * Processes /api/bet request
+     *
+     * @param BetRequest $request
+     */
+    public function store(BetRequest $request)
     {
         print_r('ok');
     }

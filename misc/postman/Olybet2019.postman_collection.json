@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "c4947942-bfd4-4c75-8f61-38d10b2f6b85",
+		"name": "Olybet2019",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Store Bet [wrong input]",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"player_id\": \"1\",\n\t\"stake_amount\": \"10\",\n\t\"selections\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"odds\": 1.561\n\t\t},\n\t\t{\n\t\t\t\"id\": 2,\n\t\t\t\"odds\": 2.48\n\t\t},\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"odds\": 17\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.2/learning/olybet/ob2019/public/api/bet",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"2"
+					],
+					"path": [
+						"learning",
+						"olybet",
+						"ob2019",
+						"public",
+						"api",
+						"bet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Store Bet [correct input]",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"player_id\": \"1\",\n\t\"stake_amount\": \"10\",\n\t\"selections\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"odds\": 1.561\n\t\t},\n\t\t{\n\t\t\t\"id\": 2,\n\t\t\t\"odds\": 2.48\n\t\t},\n\t\t{\n\t\t\t\"id\": 5,\n\t\t\t\"odds\": 17\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.2/learning/olybet/ob2019/public/api/bet",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"2"
+					],
+					"path": [
+						"learning",
+						"olybet",
+						"ob2019",
+						"public",
+						"api",
+						"bet"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
