@@ -5,7 +5,8 @@ namespace App\Traits;
 use Sofa\ModelLocking\ModelLocked;
 use Sofa\ModelLocking\ModelUnlocked;
 
-trait Locking {
+trait Locking
+{
     use \Sofa\ModelLocking\Locking;
 
     /**
@@ -38,7 +39,7 @@ trait Locking {
         $this->setRelation('modelLock', $lock);
 
         if ($events = $this->getEventDispatcher()) {
-            //fixing vendors "fire" => "dispatch"
+            // fixing vendors "fire" => "dispatch"
             $events->dispatch(new ModelLocked($this));
         }
 
@@ -57,7 +58,7 @@ trait Locking {
         unset($this->relations['modelLock']);
 
         if ($events = $this->getEventDispatcher()) {
-            //fixing vendors "fire" => "dispatch"
+            // fixing vendors "fire" => "dispatch"
             $events->dispatch(new ModelUnlocked($this));
         }
 

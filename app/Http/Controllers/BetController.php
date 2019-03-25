@@ -20,10 +20,10 @@ class BetController extends Controller
      */
     public function store(BetRequest $request): Response
     {
-        //get player we will be working with
+        // get player we will be working with
         $player = Player::find($request->player_id);
 
-        //lock it - only one bet store request per time
+        // lock it - only one bet store request per time
         $player->lock();
 
         DB::transaction(function() use ($request, $player) {
@@ -44,7 +44,7 @@ class BetController extends Controller
             sleep(1);
         });
 
-        //unlock player for next requests
+        // unlock player for next requests
         $player->unlock();
 
         return response()->json((object)[], Response::HTTP_CREATED);
