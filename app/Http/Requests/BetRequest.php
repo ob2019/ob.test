@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\CustomErrors;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -26,28 +28,30 @@ class BetRequest extends FormRequest
      */
     public function messages(): array
     {
+        $betslipError = CustomErrors::getForValidator(1);
+
         return [
-            'player_id.required' => '1|Betslip structure mismatch',
-            'stake_amount.required' => '1|Betslip structure mismatch',
-            'selections.required' => '1|Betslip structure mismatch',
-            'selections.array' => '1|Betslip structure mismatch',
-            'selections.*.id.required' => '1|Betslip structure mismatch',
-            'selections.*.odds.required' => '1|Betslip structure mismatch',
+            'player_id.required' => $betslipError,
+            'stake_amount.required' => $betslipError,
+            'selections.required' => $betslipError,
+            'selections.array' => $betslipError,
+            'selections.*.id.required' => $betslipError,
+            'selections.*.odds.required' => $betslipError,
 
-            'stake_amount.min' => '2|Minimum stake amount is :min',
-            'stake_amount.max' => '3|Maximum stake amount is :max',
+            'stake_amount.min' => CustomErrors::getForValidator(2),
+            'stake_amount.max' => CustomErrors::getForValidator(3),
 
-            'selections.min' => '4|Minimum number of selections is :min',
-            'selections.max' => '5|Maximum number of selections is :max',
+            'selections.min' => CustomErrors::getForValidator(4),
+            'selections.max' => CustomErrors::getForValidator(5),
 
-            'selections.*.odds.min' => '6|Minimum odds are :min',
-            'selections.*.odds.max' => '7|Maximum odds are :max',
+            'selections.*.odds.min' => CustomErrors::getForValidator(6),
+            'selections.*.odds.max' => CustomErrors::getForValidator(7),
 
-            'selections.*.id.distinct' => '8|Duplicate selection found',
+            'selections.*.id.distinct' => CustomErrors::getForValidator(8),
 
-            'player_id.max_win_amount' => '9|Maximum win amount is :max_win_amount',
-            'player_id.is_not_locked' => '10|Your previous action is not finished yet',
-            'player_id.sufficient_balance' => '11|Insufficient balance',
+            'player_id.max_win_amount' => CustomErrors::getForValidator(9),
+            'player_id.is_not_locked' => CustomErrors::getForValidator(10),
+            'player_id.sufficient_balance' => CustomErrors::getForValidator(11),
         ];
     }
 
@@ -89,55 +93,50 @@ class BetRequest extends FormRequest
             // described in api specification
             $request = request()->all();
 
-            $globalErrors = [];
-            foreach ($errors as $k => $v) {
-                if (strpos($k, "selections.") === false) {
-                    // if this is global error
+            $this->setGlobalErrors($request, $errors);
+            $this->setSelectionErrors($request, $errors);
 
-                    $globalErrors[] = $this->getErrorPayload($v[0]);
-                } else {
-                    // if this is selection error
-
-                    // getting path to root of given selection array
-                    $key = substr($k,0,strrpos($k,'.'));
-
-                    Arr::set($request, $key . ".errors", $this->getErrorPayload($v[0]));
-                }
-            }
-
-            if (!empty($globalErrors)) {
-                $request['errors'] = $globalErrors;
-            }
-
-            response()->json($request, Response::HTTP_BAD_REQUEST)->send();
-            exit;
+            throw new HttpResponseException(response()->json($request, Response::HTTP_BAD_REQUEST));
         });
     }
 
-    /**
-     * Extract error code and error message from custom error message of format [error code]|[error_message]
-     *
-     * @param string $error
-     * @return array
-     */
-    private function getErrorPayload(string $error): array
+    private function setGlobalErrors(array &$request, array $errors): void
     {
-        $results = [];
-        $data = explode("|", $error);
+        $globalErrors = [];
 
-        if (count($data) == 2) {
-            $results = [
-                'code' => $data[0],
-                'message' => $data[1],
-            ];
-        } else {
-            $results = [
-                'code' => 0,
-                'message' => $error
-            ];
+        foreach ($errors as $k => $v) {
+            if (strpos($k, "selections.") === false) {
+                // if this is global error
+
+                $globalErrors[] = CustomErrors::getErrorPayload($v[0]);
+            }
         }
 
-        return $results;
+        if (!empty($globalErrors)) {
+            // not sure if keys order is important, but let's make it to be up to date with specification sample
+            $selections = $request['selections'];
+            unset($request['selections']);
+
+            // add an array with global errors
+            $request['errors'] = $globalErrors;
+
+            // place selections block right after global errors array
+            $request['selections'] = $selections;
+        }
+    }
+
+    private function setSelectionErrors(array &$request, array $errors): void
+    {
+        foreach ($errors as $k => $v) {
+            if (strpos($k, "selections.") !== false) {
+                // if this is selection error
+
+                // getting path to root of given selection array
+                $key = substr($k,0,strrpos($k,'.'));
+
+                Arr::set($request, $key . ".errors", CustomErrors::getErrorPayload($v[0]));
+            }
+        }
     }
 }
 

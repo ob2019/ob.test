@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 use App\Player;
+use App\Helpers\CustomErrors;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,8 +45,8 @@ class AppServiceProvider extends ServiceProvider
         // fix for MySQL < 5.7.7
         Schema::defaultStringLength(191);
 
-        // parsing request data which will be needed for further operations
-        $this->prepareRequestData();
+        // init custom error messaging
+        CustomErrors::init();
 
         // adding all custom validators we may need
         $this->addCustomValidators();
@@ -63,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
     private function addIsNotLockedValidator(): void
     {
         Validator::extend('is_not_locked', function ($attribute, $value, $parameters, $validator) {
-            $player = Player::find($this->request['player_id']);
+            $player = Player::find(request()->player_id);
 
             return !$player->isLocked();
         });
@@ -80,7 +81,7 @@ class AppServiceProvider extends ServiceProvider
                 return str_replace([':max'], $parameters, $message);
             });
 
-            return $this->winAmount < $parameters[0];
+            return $this->getWinAmount() < $parameters[0];
         });
     }
 
@@ -91,7 +92,10 @@ class AppServiceProvider extends ServiceProvider
     private function addSufficientBalanceValidator(): void
     {
         Validator::extend('sufficient_balance', function ($attribute, $value, $parameters, $validator) {
-            $player_id = $this->request['player_id'] ?? 0;
+            $player_id = request()->player_id ?? 0;
+
+            //print_r(request()->all()); exit;
+
             if ($player_id === 0) {
                 return false;
             }
@@ -102,7 +106,7 @@ class AppServiceProvider extends ServiceProvider
             //refresh balance value in case we have created a new player
             $player->refresh();
 
-            return $this->winAmount < $player->balance;
+            return $this->getWinAmount() < $player->balance;
         });
     }
 
@@ -116,10 +120,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $multiplier = 1.00;
 
-        $selection = $this->request['selections'] ?? [];
+        $selections = request()->selections ?? [];
 
-        if (!empty($selection)) {
-            foreach ($this->request['selections'] as $selection) {
+        if (!empty($selections)) {
+            foreach ($selections as $selection) {
                 $multiplier *= $selection['odds'] ?? 0;
             }
         }
@@ -134,18 +138,9 @@ class AppServiceProvider extends ServiceProvider
      */
     private function getWinAmount(): float
     {
-        $stakeAmount = $this->request['stake_amount'] ?? 0;
+        $stakeAmount = request()->stake_amount ?? 0;
         $selectionsMultiplier = $this->getSelectionsMultiplier();
 
         return $stakeAmount * $selectionsMultiplier;
-    }
-
-    /**
-     * Prepared data needed inside custom validators
-     */
-    private function prepareRequestData(): void
-    {
-        $this->request = request()->all();
-        $this->winAmount = $this->getWinAmount();
     }
 }

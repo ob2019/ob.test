@@ -41,7 +41,7 @@ class BetController extends Controller
             // trigger an event for bet post-storing actions
             event(new BetStored($bet));
 
-            sleep(10);
+            sleep(1);
         });
 
         //unlock player for next requests
