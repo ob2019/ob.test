@@ -78,7 +78,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Validator::extend('max_win_amount', function ($attribute, $value, $parameters, $validator) {
             $validator->addReplacer('max_win_amount', function ($message, $attribute, $rule, $parameters) {
-                return str_replace([':max'], $parameters, $message);
+                return str_replace([':max_win_amount'], $parameters, $message);
             });
 
             return $this->getWinAmount() < $parameters[0];

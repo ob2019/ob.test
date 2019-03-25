@@ -100,6 +100,12 @@ class BetRequest extends FormRequest
         });
     }
 
+    /**
+     * Extends $request array with global errors array if there are any
+     *
+     * @param array $request
+     * @param array $errors
+     */
     private function setGlobalErrors(array &$request, array $errors): void
     {
         $globalErrors = [];
@@ -114,7 +120,7 @@ class BetRequest extends FormRequest
 
         if (!empty($globalErrors)) {
             // not sure if keys order is important, but let's make it to be up to date with specification sample
-            $selections = $request['selections'];
+            $selections = $request['selections'] ?? [];
             unset($request['selections']);
 
             // add an array with global errors
@@ -125,6 +131,12 @@ class BetRequest extends FormRequest
         }
     }
 
+    /**
+     * Extends each selection with errors array if there are any
+     *
+     * @param array $request
+     * @param array $errors
+     */
     private function setSelectionErrors(array &$request, array $errors): void
     {
         foreach ($errors as $k => $v) {
@@ -132,7 +144,7 @@ class BetRequest extends FormRequest
                 // if this is selection error
 
                 // getting path to root of given selection array
-                $key = substr($k,0,strrpos($k,'.'));
+                $key = substr($k, 0, strrpos($k, '.'));
 
                 Arr::set($request, $key . ".errors", CustomErrors::getErrorPayload($v[0]));
             }

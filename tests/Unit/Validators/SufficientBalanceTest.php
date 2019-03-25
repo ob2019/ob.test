@@ -6,6 +6,10 @@ use Tests\TestCase;
 
 class SufficientBalanceTest extends TestCase
 {
+    private $rules = [
+        'player_id' => 'sufficient_balance'
+    ];
+
     /**
      * A basic unit test example.
      *
@@ -13,25 +17,17 @@ class SufficientBalanceTest extends TestCase
      */
     public function testSufficientBalanceValidatorWillWorkWithNotExistingPlayer()
     {
-        $rules = [
-            'player_id' => 'sufficient_balance'
-        ];
-
         $data = [
             'player_id' => "1",
         ];
         request()->merge($data);
 
-        $v = $this->app['validator']->make($data, $rules);
+        $v = $this->app['validator']->make($data, $this->rules);
         $this->assertTrue($v->passes());
     }
 
     public function testSufficientBalanceValidatorWillFailOnInsufficientBalance()
     {
-        $rules = [
-            'player_id' => 'sufficient_balance'
-        ];
-
         $data = [
             'player_id' => "100",
             'stake_amount' => '1000',
@@ -48,7 +44,7 @@ class SufficientBalanceTest extends TestCase
         ];
         request()->merge($data);
 
-        $v = $this->app['validator']->make($data, $rules);
+        $v = $this->app['validator']->make($data, $this->rules);
         $this->assertFalse($v->passes());
     }
 }
