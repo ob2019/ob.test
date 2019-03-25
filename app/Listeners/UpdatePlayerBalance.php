@@ -2,8 +2,7 @@
 
 namespace App\Listeners;
 
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Events\BetStored;
 
 class UpdatePlayerBalance
 {
@@ -18,12 +17,12 @@ class UpdatePlayerBalance
     }
 
     /**
-     * Handle the event.
+     * Updating player balance
      *
-     * @param  object  $event
+     * @param  BetStored  $event
      * @return void
      */
-    public function handle($event): void
+    public function handle(BetStored $event): void
     {
         $newBalance = $event->bet->player->balance - $event->bet->getTotalAmount();
         $event->bet->player->update([

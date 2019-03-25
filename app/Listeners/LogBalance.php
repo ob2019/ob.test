@@ -17,7 +17,7 @@ class LogBalance
     }
 
     /**
-     * Handle the event.
+     * Logging current and before balances
      *
      * @param BetStored $event
      * @return void
